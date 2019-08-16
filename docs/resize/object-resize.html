@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #my_element {
+            background-color: burlywood;
+        }
+
+        .bold{
+            font-weight: 700;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div id="my_element">
+        <div>宽度：<label id='lWidth'></label> 高度：<label id="lHeight"></label></div>
+        <br>
+        <input type="button" value="高度+5" onclick="increaseHeight()" /><br /><br />
+
+        <input type="button" onclick="alert('click me')" value="事件测试" />
+    </div>
+
+    <div>
+        <p class="bold">
+            思路：
+        </p>
+        <p>
+            如果IE,直接注册onresize（这个点赞啊）
+        </p>
+        <p>
+            否则： 创建 type为text/html的object
+        </p>
+        <p>设置position为absolute, 高度100%, 宽度100% （这样可以获得父容器的宽高）</p>
+        <p>设置pointer-events:none，利用点击穿透（让object窗体变成幽灵）</p>
+        <p>object元素的高度变化后，通知订阅者</p>
+        <p>resize事件节流</p>
+
+
+    </div>
+    <div>
+        <p class="bold">问题：</p>
+        <p>1.创建object</p>
+        <p>1.事件处理函数挂载了元素本身上，</p>
+    </div>
+
+    <script src="./object-resize.js"></script>
+    <script>
+
+        var myElement = document.getElementById('my_element'),
+            myResizeFn = function (e) {
+                lWidth.innerHTML = this.clientWidth;
+                lHeight.innerHTML = this.clientHeight;
+            };
+            
+        addResizeListener(myElement, myResizeFn);
+        // removeResizeListener(myElement, myResizeFn);
+
+
+        my_element.onresize = function () {
+            console.log('resize');
+        }
+
+        function increaseHeight() {
+            var h = window.getComputedStyle(myElement, null).getPropertyValue("height");
+            myElement.style.height = (+ h.replace('px', '') + 5) + 'px'
+        }
+    </script>
+</body>
+
+</html>

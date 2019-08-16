@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>等图片加载完毕</title>
+
+
+    <style>
+        .bg {
+            background-color: #433F34;
+            background-size: contain;
+        }
+
+        #dialog {
+            height: 270px;
+            width: 480px;
+            color: blue;
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+        }
+
+        .content {
+            font-size: 27px;
+            margin: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div style="text-align: center; font-size:40px; line-height:100px">
+        建议使用chrome浏览器，使用 Fast 3G网络。<br />
+        同时Network别开启： disable cache选项
+
+    </div>
+    <input type="button" value="展示弹框" onclick="createDialog()" />
+
+
+    <script>
+
+        let dg = null;
+        function createDialog() {
+
+            onImageLoad('./img/bg-huoluo.jpg').then(src => {
+                if (!dg) {
+                    dg = document.createElement('div');
+                    dg.className = "bg";
+                    dg.style.backgroundImage = `url(${src})`;
+                    dg.id = "dialog";
+                    dg.innerHTML = `
+                <div class="content">我爱赫萝!!!!</div>
+            `
+                    document.body.appendChild(dg);
+                }
+            })
+
+
+        }
+
+        function onImageLoad(src) {
+            return new Promise((resolve, reject) => {
+                let img = new Image();
+                img.src = src;
+                img.onload = function () {
+                    resolve(src)
+                }
+                img.onerror = reject
+            })
+
+        }
+
+
+    </script>
+
+
+</body>
+
+</html>

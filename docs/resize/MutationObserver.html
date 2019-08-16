@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MutationObserver</title>
+    <style>
+        #my_element {
+            background-color: burlywood;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="my_element">
+        <div>宽度：<label id='lWidth'></label> 高度：<label id="lHeight"></label></div>
+        <br>
+        <input type="button" value="高度+5" onclick="increaseHeight()" /><br /><br />
+
+        <input type="button" onclick="alert('click me')" value="事件测试" />
+    </div>
+    <div>
+        <div>
+            原理：
+        </div>
+        <div>
+            引起元素尺寸变化的因素无非是window.resize啦，或者元素的属性,子节点，内容等变化。   
+            <p>那么就监听这两块就好啦。</p>
+        </div>
+    </div>
+
+    <script>
+
+        const myElement = document.getElementById('my_element');
+        const lWidthEl = document.getElementById('lWidth');
+        const lHeightEl = document.getElementById('lHeight');
+        const attrList = ["style", "class", "height", "width"];
+
+        function increaseHeight() {
+            var h = window.getComputedStyle(myElement, null).getPropertyValue("height");
+            myElement.style.height = (+ h.replace('px', '') + 5) + 'px'
+        }
+
+        const observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                setHeightWidth(mutation.target)
+            });
+        });
+
+        const config = {
+            attributes: true,
+            childList: true,
+            characterData: true
+        }
+
+        observer.observe(myElement, config);
+
+        window.addEventListener("resize", function () {
+            setHeightWidth(myElement);
+        })
+
+        function setHeightWidth(el) {
+            const cs = window.getComputedStyle(el, null);
+            lWidthEl.innerHTML = cs.width;
+            lHeightEl.innerHTML = cs.height;
+        }
+
+        setHeightWidth(myElement);
+
+    </script>
+
+</body>
+
+</html>

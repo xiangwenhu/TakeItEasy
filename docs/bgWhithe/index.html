@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>背景图片闪现空白</title>
+
+    <style>
+    
+        ul{
+            font-size: 20px;
+            margin: auto;
+        }
+
+        .blue{
+            color: blue
+        }
+
+        .size22{
+            font-size: 22px
+        }
+    
+    </style>
+</head>
+
+<body>
+    <ul>
+        <li><a href="./normal.html">正常情况</a></li>
+        <li><a href="./base64.html">base64</a></li>      
+        <li><a href="./prefetch.html">prefetch</a></li>     
+        <li><a href="./hideImage.html">创建隐藏Img节点</a></li>  
+        <li><a href="./waitingImg.html">等待图片加载 （有点颠倒主次）</a></li>
+        <li><a href="./bgColor.html">同时设置背景颜色和图片</a></li>  
+        <li><a href="./progress.html">png正常，png交错，jpg渐进</a></li>   
+    </ul>
+
+    <div>
+        <p>其他的方式:</p>
+        <ul>
+            <li>webp格式，减少图片大小</li>
+            <li>css spirte, 减少http开销</li>
+            <li>jpg格式图片压缩</li>
+            <li>图片cdn</li>
+            <li>多域名</li>
+            <li>背景图片切割，能repeat就repeat</li>
+        </ul>
+    </div>
+
+    <p class="blue size22">
+        总结： 我===内容  & 你 === 背景图片
+        <p class="blue size22">1. 我显示的时候，你已经在</p>
+        <p class="blue size22">2. 若不能，我显示的手，你尽快在</p>
+        <p class="blue size22">3. 你尽可能的小</p>
+    </p>
+</body>
+
+</html>

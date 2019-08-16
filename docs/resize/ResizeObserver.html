@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ResizeObserver</title>
+    <style>
+        #my_element {
+            background-color: burlywood;
+        }
+
+        #my_element2 {
+            background-color: black;
+            height: 20%;
+            width: 80%
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div id="my_element">
+        content1
+    </div>
+
+    <div id="my_element2">
+        content2
+    </div>
+
+    <div>
+        <p>原理: ResizeObserver</p>
+
+        <pre><code>
+                        const resizeObserver = new ResizeObserver(entries => {
+                            for (let entry of entries) {
+                               
+                                console.log(entry.target.id, `height:${entry.contentRect.height}  width:${entry.contentRect.width}`);
+                            }
+                        });
+                        resizeObserver.observe(document.querySelector('#my_element'));
+                        resizeObserver.observe(document.querySelector('#my_element2'));
+                </code>
+            </pre>
+
+
+    </div>
+
+    <script>
+
+        const resizeObserver = new ResizeObserver(entries => {
+            for (let entry of entries) {
+
+                console.log(entry.target.id, `height:${entry.contentRect.height}  width:${entry.contentRect.width}`);
+            }
+        });
+        resizeObserver.observe(document.querySelector('#my_element'));
+        resizeObserver.observe(document.querySelector('#my_element2'));
+    </script>
+
+</body>
+
+</html>

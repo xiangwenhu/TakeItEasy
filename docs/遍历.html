@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>遍历</title>
+    <style>
+        .container {
+            margin: auto;
+            width: 500px;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        数量：<input type="number" value="1000000" id="textCount" /><input type="button" value="执行" id="btnExcute">
+
+        <div id="message"></div>
+    </div>
+
+    <script src="./js//util.js"></script>
+    <script src="./js/message.js"></script>
+    <script>
+
+        function createData(count) {
+            const arr = []
+            for (var i = 0; i < count; i++) {
+                arr.push(i)
+            }
+            return arr
+        }
+
+        function pureFor(data) {
+            for (let i = 0; i < data.length; i++) {
+
+            }
+        }
+
+        function pureWhile(data) {
+            let i = 0;
+            while (i < data.length) {
+                i++
+            }
+        }
+
+        function forIn(data) {
+            for (let p in data) {
+
+            }
+        }
+
+        function forOf(data) {
+            for (let p of data) {
+            }
+        }
+
+        function pureForEach(data) {
+            data.forEach(function () {
+
+            })
+        }
+
+        function reduce(data) {
+            data.reduce(function (val, cur) {
+
+            }, 0)
+        }
+
+        const msger = createMessager(document.getElementById("message"));
+
+        const fns = [pureFor, pureForEach, pureWhile, forIn, forOf, reduce];
+        function execute(fns, count) {            
+            const data = createData(count);
+            for (let i = 0; i < fns.length; i++) {
+                let fn = fns[i];
+                let time = timing(fn, data);
+                msger(`${fn.name}：${(time).toFixed(2)}ms`);
+            }
+            msger("-----------------------------")
+        }
+
+        const textCountEl = document.getElementById('textCount');
+        document.getElementById("btnExcute").addEventListener("click", function (ev) {
+            const count = +textCountEl.value;
+            execute(fns, count);
+        })
+
+
+
+    </script>
+</body>
+
+</html>

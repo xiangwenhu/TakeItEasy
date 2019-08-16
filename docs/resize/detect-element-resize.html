@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>detect-element-resize</title>
+    <style>
+        #my_element {
+            background-color: burlywood;
+        }
+
+        .bold {
+            font-weight: 700;
+        }
+
+        .ani {
+            animation: ks 1s;
+        }
+
+        @keyframes ks {
+            from {
+                width: 100%
+            }
+
+            to {
+                width: 50%
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="my_element">
+        <div>宽度：<label id='lWidth'></label> 高度：<label id="lHeight"></label></div>
+        <br>
+        <input type="button" value="高度+5" onclick="increaseHeight()" /><br /><br />
+
+        <input type="button" onclick="alert('click me')" value="事件测试" />
+        <input type="button" onclick="startAnimation(this)" value="增添animation" />
+    </div>
+
+
+    <p>
+        <p class="bold">
+            原理：
+        </p>
+        <p>
+            https://zhuanlan.zhihu.com/p/24887312<br>
+            The scroll event is fired when the document view or an element has been scrolled.<br>
+            当文档视图或者元素滚动的时候会触发 scroll 事件。<br>
+            也就是说元素滚动的时候会触发这个事件，那么什么时候元素会滚动？当元素大于其父级元素，且父级元素允许其滚动的时候，该元素可以进行滚动。<br>
+            换句话说，元素可以滚动意味着父子元素大小不一致，这是这个方法的核心。<br>
+
+            那么我们需要让元素大小发生改变时，使得 scrollLeft 或者 scrollTop 发生改变，从而触发 scroll 事件，进一步得知其大小发生了改变。
+        </p>
+        <p>
+            visibility: hidden; opacity: 0; position: absolute;让自己变得虚无
+        </p>
+        <p>addEventListener("scroll", scrollListener, true) 在捕捉阶段拦截事件，使用false无效</p>
+        <p>div.expand-trigger 变大</p>
+        <p>div.expand-trigger 变小</p>
+        <p>animationstart来监听显示，比如style.display = 'none'然后style.display = 'block'</p>
+    </p>
+    <div>
+        <p class="bold">问题：</p>
+        <p>1.额外创建四个元素节点以及一个style节点</p>
+        <p>1.事件都挂载了元素本身身上，</p>
+    </div>
+
+    <script src="./detect-element-resize.js"></script>
+    <script>
+
+        var myElement = document.getElementById('my_element'),
+            myResizeFn = function (e) {
+                lWidth.innerHTML = this.clientWidth;
+                lHeight.innerHTML = this.clientHeight;
+            };
+
+        addResizeListener(myElement, myResizeFn);
+        // removeResizeListener(myElement, myResizeFn);
+
+
+        function startAnimation(el) {
+            myElement.classList.add("ani");
+        }
+
+        myElement.addEventListener("scroll", function () {
+            console.log('scrolling')
+        }, true)
+
+        function increaseHeight() {
+            var h = window.getComputedStyle(myElement, null).getPropertyValue("height");
+            myElement.style.height = (+ h.replace('px', '') + 5) + 'px'
+        }
+    </script>
+</body>
+
+</html>
