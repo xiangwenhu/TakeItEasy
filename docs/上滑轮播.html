@@ -17,51 +17,44 @@
             overflow: hidden;
         }
 
-        .ani-item {
+        .upslide-item {
             position: absolute;
             top: 100%;
-            opacity: 0;
             line-height: 30px;
         }
 
-        .anim {
-            animation: ani-in 1000ms linear;
+        .upslide-item-animation {
+            animation: slideup-animation-in 1000ms linear;
             animation-fill-mode: forwards;
         }
 
-        @keyframes ani-in {
+        @keyframes slideup-animation-in {
             from {
                 transform: translateY(0);
-                opacity: 1;
             }
 
             to {
                 transform: translateY(-100%);
-                opacity: 1;
             }
         }
 
-        @keyframes ani-pause {
+        @keyframes slideup-animation-pause {
             from {
                 transform: translateY(-100%);
-                opacity: 1;
             }
 
             to {
                 transform: translateY(-100%);
-                opacity: 1;
             }
         }
 
-        @keyframes ani-out {
+        @keyframes slideup-animation-out {
             from {
                 transform: translateY(-100%);
-                opacity: 1;
             }
 
             to {
                 transform: translateY(-200%);
-                opacity: 1;
             }
         }
     </style>
@@ -79,6 +72,8 @@
         <button type="button" id="btnChange">切换到队列1</button>
 
     </div>
+
+    <script src="./js/upSlide.js"></script>
     <script>
         const contents = [
             "队列1：春天 - first",
@@ -99,110 +94,17 @@
 
         const el = document.querySelector("#box");
 
-        const IN_TIME = 1000;
-        const PAUSE_TIME = 1000;
-        const OUT_TIME = 1000;
-        const TOTAL_TIME = IN_TIME + PAUSE_TIME + OUT_TIME;
-        const STAGE_FIRST_PERCENT = IN_TIME / TOTAL_TIME;
-        const STAGE_SECOND_PERCENT = PAUSE_TIME / TOTAL_TIME;
-        const STAGE_THIRD_PERCENT = 1 - STAGE_FIRST_PERCENT - STAGE_SECOND_PERCENT;
-        const STAGE_FIRST_SECOND_PERCENT = (IN_TIME + OUT_TIME) / TOTAL_TIME
-
-        let changeStatus = 0; // 0不需要， 1第一阶段 ， 2第二阶段
-        let currentContents = null;
-
-        function createItems(datas, baseDelay = 0) {
-            const fragment = document.createDocumentFragment();
-            datas.forEach((c, i) => {
-                const newEl = document.createElement("div");
-                newEl.dataset.isLast = i === datas.length - 1 ? 1 : 0;
-                newEl.innerText = c;
-                newEl.className = "ani-item anim"
-                newEl.style.animationDelay = baseDelay + i * TOTAL_TIME * STAGE_FIRST_SECOND_PERCENT + "ms";
-                newEl.style.animationDuration = IN_TIME + "ms";
-                fragment.appendChild(newEl);
-            })
-            return fragment;
-        }
-
-        el.addEventListener("animationstart", e => {
-            // 开启新的轮回
-            if (e.animationName === "ani-in" && e.target.dataset.isLast == 1) {
-                execute(currentContents, TOTAL_TIME * STAGE_FIRST_SECOND_PERCENT);
-            }
-        })
-
-        el.addEventListener("animationend", e => {
-            const el = e.target;
-            const parent = el.parentElement;
-            const animationName = e.animationName;
-
-            switch (animationName) {
-                case "ani-in":
-                    el.style.animationName = "ani-pause";
-                    el.style.animationDuration = PAUSE_TIME + "ms";
-                    el.style.animationDelay = "0ms";
-                    break;
-                case "ani-pause":
-                    el.style.animationName = "ani-out";
-                    el.style.animationDuration = OUT_TIME + "ms";
-                    el.style.animationDelay = "0ms";
-
-                    // 切换
-                    if (changeStatus === 1) {
-                        // 移除前面节点
-                        while (el.previousElementSibling) {
-                            parent.removeChild(el.previousElementSibling);
-                        }
-                        // 移除后面的节点
-                        while (el.nextElementSibling) {
-                            parent.removeChild(el.nextElementSibling);
-                        }
-                        // 标记
-                        el.classList.add("__deleting__");
-                        // 切换
-                        execute(currentContents, 0);
-                        changeStatus = 0
-                    }
-                    break;
-                case "ani-out":
-                    e.target.classList.remove("anim");
-                    e.target.style.animationDelay = "";
-
-                    if (el.classList.contains("__deleting__")) {
-                        parent.removeChild(el);
-                    }
-                    // 轮回结束-清除节点
-                    if (e.target.dataset.isLast == 1) {
-                        const parent = e.target.parentElement;
-                        const delItems = parent.querySelectorAll(".ani-item:not(.anim)");
-                        if (delItems.length > 0) {
-                            for (let i = delItems.length - 1; i >= 0; i--) {
-                                parent.removeChild(delItems[i]);
-                            }
-                        }
-                    }
-                    break;
-                default: break;
-            }
-        })
-
-        function execute(content, baseDelay = 0) {
-            const c = createItems(content, baseDelay);
-            el.appendChild(c);
-        }
-
-        currentContents = contents;
-        execute(currentContents);
+        const upSlide = new UpSlide({
+            el
+        });
+        upSlide.start(contents);
 
         document.getElementById('btnChange').addEventListener("click", () => {
-            changeStatus = 1;
-            currentContents = contents;
+            upSlide.switch(contents);
         })
 
         document.getElementById('btnChange2').addEventListener("click", () => {
-            changeStatus = 1;
-            currentContents = contents2;
+            upSlide.switch(contents2);
         })
     </script>
 
