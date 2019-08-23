@@ -27,7 +27,7 @@ function clearSiblings(el) {
 class UpSlide {
     constructor(options) {
         this.el = options.el;
-        this.options = Object.assign(DEFAULT_OPTION, options);
+        this.options = Object.assign({}, DEFAULT_OPTION, options);
         this.changeStatus = 0;
         this.currentContents = null;
 
