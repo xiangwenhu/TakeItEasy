@@ -9,6 +9,20 @@ const DEFAULT_OPTION = {
     animationOutClass: "slideup-animation-out"
 };
 
+const DELETING_CLASS_NAME = "__deleting__";
+
+function clearSiblings(el) {
+    const parent = el.parentElement;
+    // 移除前面节点
+    while (el.previousElementSibling) {
+        parent.removeChild(el.previousElementSibling);
+    }
+    // 移除后面的节点
+    while (el.nextElementSibling) {
+        parent.removeChild(el.nextElementSibling);
+    }
+}
+
 class UpSlide {
     constructor(options) {
         this.el = options.el;
@@ -19,6 +33,8 @@ class UpSlide {
         const { inTime, pauseTime, outTime } = this.options;
         this.totalTime = inTime + pauseTime + outTime;
         this.inPausePercent = (inTime + pauseTime) / this.totalTime;
+        this.animationstartEvent = this.animationstartEvent.bind(this);
+        this.animationendEvent = this.animationendEvent.bind(this);
         this.init();
     }
 
@@ -39,8 +55,16 @@ class UpSlide {
         return fragment;
     }
 
-    init() {
-        const { el, totalTime, inPausePercent } = this;
+    animationstartEvent(e) {
+        const { totalTime, inPausePercent } = this;
+        const { animationInClass } = this.options;
+        // 开启新的轮回
+        if (e.animationName === animationInClass && e.target.dataset.isLast == 1) {
+            this.innerStart(this.currentContents, totalTime * inPausePercent);
+        }
+    }
+
+    animationendEvent(e) {
         const {
             animationInClass,
             animationPauseClass,
@@ -50,82 +74,77 @@ class UpSlide {
             pauseTime,
             outTime
         } = this.options;
-        el.addEventListener("animationstart", e => {
-            // 开启新的轮回
-            if (e.animationName === animationInClass && e.target.dataset.isLast == 1) {
-                this.start(this.currentContents, totalTime * inPausePercent);
-            }
-        });
 
-        el.addEventListener("animationend", e => {
-            const { changeStatus } = this;
-            const el = e.target;
-            const parent = el.parentElement;
-            const animationName = e.animationName;
+        const { changeStatus } = this;
+        const el = e.target;
+        const parent = el.parentElement;
+        const animationName = e.animationName;
 
-            switch (animationName) {
-                case animationInClass:
-                    el.style.animationName = animationPauseClass;
-                    el.style.animationDuration = pauseTime + "ms";
-                    el.style.animationDelay = "0ms";
-                    break;
-                case animationPauseClass:
-                    el.style.animationName = animationOutClass;
-                    el.style.animationDuration = outTime + "ms";
-                    el.style.animationDelay = "0ms";
+        switch (animationName) {
+            case animationInClass:
+                el.style.animationName = animationPauseClass;
+                el.style.animationDuration = pauseTime + "ms";
+                el.style.animationDelay = "0ms";
+                break;
+            case animationPauseClass:
+                el.style.animationName = animationOutClass;
+                el.style.animationDuration = outTime + "ms";
+                el.style.animationDelay = "0ms";
 
+                // 切换
+                if (changeStatus === 1) {
+                    clearSiblings(el);
+                    // 标记
+                    el.classList.add(DELETING_CLASS_NAME);
                     // 切换
-                    if (changeStatus === 1) {
-                        // 移除前面节点
-                        while (el.previousElementSibling) {
-                            parent.removeChild(el.previousElementSibling);
-                        }
-                        // 移除后面的节点
-                        while (el.nextElementSibling) {
-                            parent.removeChild(el.nextElementSibling);
-                        }
-                        // 标记
-                        el.classList.add("__deleting__");
-                        // 切换
-                        this.start(this.currentContents, 0);
-                        this.changeStatus = 0;
-                    }
-                    break;
-                case animationOutClass:
-                    e.target.classList.remove(animationClass);
-                    e.target.style.animationDelay = "";
+                    this.innerStart(this.currentContents, 0);
+                    this.changeStatus = 0;
+                }
+                break;
+            case animationOutClass:
+                e.target.classList.remove(animationClass);
+                e.target.style.animationDelay = "";
 
-                    if (el.classList.contains("__deleting__")) {
-                        parent.removeChild(el);
-                    }
-                    // 轮回结束-清除节点
-                    if (e.target.dataset.isLast == 1) {
-                        const parent = e.target.parentElement;
-                        const delItems = parent.querySelectorAll(
-                            `.${className}:not(.${animationClass})`
-                        );
-                        if (delItems.length > 0) {
-                            for (let i = delItems.length - 1; i >= 0; i--) {
-                                parent.removeChild(delItems[i]);
-                            }
+                if (el.classList.contains(DELETING_CLASS_NAME)) {
+                    parent.removeChild(el);
+                }
+                // 轮回结束-清除节点
+                if (e.target.dataset.isLast == 1) {
+                    const parent = e.target.parentElement;
+                    const delItems = parent.querySelectorAll(
+                        `.${className}:not(.${animationClass})`
+                    );
+                    if (delItems.length > 0) {
+                        for (let i = delItems.length - 1; i >= 0; i--) {
+                            parent.removeChild(delItems[i]);
                         }
                     }
-                    break;
-                default:
-                    break;
-            }
-        });
+                }
+                break;
+            default:
+                break;
+        }
     }
 
-    start(content, delay = 0) {
+    init() {
+        const { el } = this;
+        el.addEventListener("animationstart", this.animationstartEvent);
+        el.addEventListener("animationend", this.animationendEvent);
+    }
+
+    innerStart(content, delay = 0) {
         this.currentContents = content;
         const c = this.createItems(content, delay);
         this.el.appendChild(c);
     }
 
-    switch(content) {
-        this.changeStatus = 1;
-        this.currentContents = content;
+    start(content, delay = 0) {
+        if (this.currentContents != null) {
+            this.changeStatus = 1;
+            this.currentContents = content;
+            return;
+        }
+        this.innerStart(content, delay);
     }
 
     destroy() {
