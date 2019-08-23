@@ -6,7 +6,8 @@ const DEFAULT_OPTION = {
     animationClass: "upslide-item-animation",
     animationInClass: "slideup-animation-in",
     animationPauseClass: "slideup-animation-pause",
-    animationOutClass: "slideup-animation-out"
+    animationOutClass: "slideup-animation-out",
+    pauseOnFocus: false
 };
 
 const DELETING_CLASS_NAME = "__deleting__";
@@ -35,6 +36,8 @@ class UpSlide {
         this.inPausePercent = (inTime + pauseTime) / this.totalTime;
         this.animationstartEvent = this.animationstartEvent.bind(this);
         this.animationendEvent = this.animationendEvent.bind(this);
+        this.mouseenterEvent = this.mouseenterEvent.bind(this);
+        this.mouseleaveEvent = this.mouseleaveEvent.bind(this);
         this.init();
     }
 
@@ -126,10 +129,29 @@ class UpSlide {
         }
     }
 
+    mouseenterEvent() {
+        const { className } = this.options;
+        this.el.querySelectorAll("." + className).forEach(el => {
+            el.style.animationPlayState = "paused";
+        });
+    }
+
+    mouseleaveEvent() {
+        const { className } = this.options;
+        this.el.querySelectorAll("." + className).forEach(el => {
+            el.style.animationPlayState = "running";
+        });
+    }
+
     init() {
         const { el } = this;
         el.addEventListener("animationstart", this.animationstartEvent);
         el.addEventListener("animationend", this.animationendEvent);
+        const { pauseOnFocus } = this.options;
+        if (pauseOnFocus === true) {
+            el.addEventListener("mouseenter", this.mouseenterEvent);
+            el.addEventListener("mouseleave", this.mouseleaveEvent);
+        }
     }
 
     innerStart(content, delay = 0) {
@@ -150,6 +172,11 @@ class UpSlide {
     destroy() {
         this.el.removeEventListener("animationstart", this.animationstartEvent);
         this.el.removeEventListener("animationend", this.animationendEvent);
+        const { pauseOnFocus } = this.options;
+        if (pauseOnFocus === true) {
+            el.removeEventListener("mouseenter", this.mouseoverEvent);
+            el.removeEventListener("mouseleave", this.mouseleaveEvent);
+        }
         this.el.innerHTML = null;
         this.el = null;
         this.options = null;
