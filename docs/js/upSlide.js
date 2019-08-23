@@ -148,7 +148,8 @@ class UpSlide {
     }
 
     destroy() {
-        // TODO::
+        this.el.removeEventListener("animationstart", this.animationstartEvent);
+        this.el.removeEventListener("animationend", this.animationendEvent);
         this.el.innerHTML = null;
         this.el = null;
         this.options = null;

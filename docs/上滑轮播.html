@@ -94,7 +94,7 @@
 
         const el = document.querySelector("#box");
 
-        const upSlide = new UpSlide({
+        let upSlide = new UpSlide({
             el
         });
         upSlide.start(contents);
@@ -106,6 +106,12 @@
         document.getElementById('btnChange2').addEventListener("click", () => {
             upSlide.start(contents2);
         })
+
+        // setTimeout(() => {
+        //     upSlide.destroy();
+        //     upSlide = null;
+        // }, 6000)
+
     </script>
 
 </body>
