@@ -1,6 +1,6 @@
 const DEFAULT_OPTION = {
     inTime: 1000,
-    pauseTime: 1000,
+    pauseTime: 1500,
     outTime: 1000,
     className: "upslide-item",
     animationClass: "upslide-item-animation",
@@ -39,8 +39,8 @@ class UpSlide {
     }
 
     createItems(datas, baseDelay = 0) {
-        const { className, animationInClass, animationClass } = this.options;
-        const { totalTime, inPausePercent, inTime } = this;
+        const { className, animationInClass, animationClass, inTime } = this.options;
+        const { totalTime, inPausePercent } = this;
         const fragment = document.createDocumentFragment();
         datas.forEach((c, i) => {
             const newEl = document.createElement("div");
