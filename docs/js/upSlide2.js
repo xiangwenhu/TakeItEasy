@@ -144,7 +144,7 @@ class UpSlide {
 
                 break;
             case animationName:
-                if (this.changeStatus !== 1) {
+                if (this.changeStatus !== 2) {
                     this.isLast = 1;
                 }
                 break;
