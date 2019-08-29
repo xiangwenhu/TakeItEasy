@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>上滑-轮播</title>
+
+    <style>
+        .box {
+            height: 30px;
+            width: 300px;
+            border: 1px solid #666;
+            margin: auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upslide-item {
+            position: relative;
+            line-height: 30px;
+        }
+
+        .upslide-frame {
+            will-change: auto;
+            animation: slide-animation 1000ms linear;
+            animation-fill-mode: forwards;
+            top: 100%;
+            position: absolute;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        .upslide-placeholder-animation {
+            animation: slideup-animation-placeholder-in 1000ms linear;
+            animation-fill-mode: forwards
+        }
+
+        @keyframes slide-animation {
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(-100%);
+            }
+        }
+
+        @keyframes slide-animation-out {
+            from {
+                top: 100%;
+            }
+
+            to {
+                top: 0%
+            }
+        }
+
+        @keyframes slideup-animation-placeholder-in {
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideup-animation-placeholder-pause {
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="box" class="box">
+    </div>
+
+    <div style="text-align:center ">
+        <button type="button" id="btnChange2">切换到队列2</button>
+        <button type="button" id="btnChange">切换到队列1</button>
+        <button type="button" id="btnStop">暂停动画</button>
+        <button type="button" id="btnContinue">继续动画</button>
+    </div>
+
+    <script src="./js/upSlide2.js"></script>
+    <script>
+        const contents = [
+            "队列1：春天 - first",
+            "队列1：夏天",
+            // "队列1：秋天",
+            // "队列1：冬天",
+            // "队列1：夏夏湉",
+            // "队列1：求七天",
+            "队列1：Who are You - last"
+        ];
+        const contents2 = [
+            "队列2：这是怎么回事 - first",
+            "队列2：谁是最可赖的人",
+            "队列2：壮士一去不复返",
+            "队列2：谁来拯救你",
+            "队列2：家福乐团购有没有 - last"
+        ]
+
+        const el = document.querySelector("#box");
+
+        let upSlide = new UpSlide({
+            el
+        });
+        upSlide.start(contents);
+
+        document.getElementById('btnChange').addEventListener("click", () => {
+            upSlide.start(contents);
+        })
+
+        document.getElementById('btnChange2').addEventListener("click", () => {
+            upSlide.start(contents2);
+        })
+
+        document.getElementById('btnStop').addEventListener("click", ()=>{
+            box.style.animationPlayState = "paused";
+            [...document.querySelectorAll(".upslide-frame")].forEach(e=>{
+                e.style.animationPlayState = "paused"
+            })
+        })
+
+        document.getElementById('btnContinue').addEventListener("click", ()=>{
+            box.style.animationPlayState = "running";
+            [...document.querySelectorAll(".upslide-frame")].forEach(e=>{
+                e.style.animationPlayState = "running"
+            })
+        })
+
+    </script>
+
+</body>
+
+</html>
