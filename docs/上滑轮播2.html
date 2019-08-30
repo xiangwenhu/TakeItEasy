@@ -81,7 +81,37 @@
 </head>
 
 <body>
+    <strong>实现原理</strong>
+    <ul>
 
+        <li>两个大frame， 每个frame有两个运动阶段 animation: 正常上滑, animation-out：滑出结束
+            <ul>
+                <li>第一阶段：初始化状态top:100%, translateY(0), 结束状态：top:100%,translateY(-100%) </li>
+                <li>第二阶段：初始化状态top:100%, translateY(-100%),结束状态： top:0%, translateY(-100%)</li>
+            </ul>
+        </li>
+        <li>容器上注册时间控制动画animation， 分为in和pause两个阶段， 监听animationend时间
+            <ul>
+                <li>in阶段 animationend: frame的animationPlayState设置为paused，进入暂停状态，并且自身进入pause阶段</li>
+                <li>pause阶段 animationend: frame的animationPlayState设置为running，进入运行状态，并且自身进入in阶段</li>
+            </ul>
+        </li>
+        <li>
+            轮回播放，isLast标记
+            <ul>
+                <li>frame第一阶段动画结束，标记isLast</li>
+                <li>容器的pause阶段结束，启动frame第二阶段动画, 开始新frame的运行， 取消isLast的标记</li>
+            </ul>
+        </li>
+        <li>
+            替换，changeStatus标记
+            <ul>
+                <li>changeStatus 0: 正常运行</li>
+                <li>changeStatus 1: 替换第一阶段， 隐藏当前播放节点之后的节点， 创新新frame, 当前的frame设置为preFrame</li>
+                <li>changeStatus 2: 替换第二阶段，删除preFrame</li>
+            </ul>
+        </li>
+    </ul>
     <div id="box" class="box">
     </div>
 
@@ -126,16 +156,16 @@
             upSlide.start(contents2);
         })
 
-        document.getElementById('btnStop').addEventListener("click", ()=>{
+        document.getElementById('btnStop').addEventListener("click", () => {
             box.style.animationPlayState = "paused";
-            [...document.querySelectorAll(".upslide-frame")].forEach(e=>{
+            [...document.querySelectorAll(".upslide-frame")].forEach(e => {
                 e.style.animationPlayState = "paused"
             })
         })
 
-        document.getElementById('btnContinue').addEventListener("click", ()=>{
+        document.getElementById('btnContinue').addEventListener("click", () => {
             box.style.animationPlayState = "running";
-            [...document.querySelectorAll(".upslide-frame")].forEach(e=>{
+            [...document.querySelectorAll(".upslide-frame")].forEach(e => {
                 e.style.animationPlayState = "running"
             })
         })

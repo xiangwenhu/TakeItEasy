@@ -127,7 +127,6 @@ class UpSlide {
                     hideSiblings(aniItem);
                     this.innerStart(this.currentContents);
                     this.changeStatus = 2;
-                    this.isLast = false;
                     return;
                 }
 
