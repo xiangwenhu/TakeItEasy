@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>上滑-轮播</title>
+
+    <style>
+        .box {
+            height: 30px;
+            width: 300px;
+            border: 1px solid #666;
+            margin: auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upslide-item {
+            line-height: 30px;
+            width: 100%;
+            padding: 0;
+            margin: 0;
+        }
+
+        .upslide-frame {
+            will-change: auto;
+            animation: slide-animation-in 1000ms linear;
+            animation-fill-mode: forwards;
+            top: 100%;
+            position: absolute;
+        }
+
+
+        @keyframes slide-animation-in {
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(-100%);
+            }
+        }
+
+        @keyframes slide-animation-pause {
+            from {
+                transform: translateY(-100%);
+            }
+
+            to {
+                transform: translateY(-100%);
+            }
+        }
+
+        @keyframes slide-animation-out {
+            from {
+                transform: translateY(-100%);
+            }
+
+            to {
+                transform: translateY(-200%);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <strong>实现原理</strong>
+    <ul>
+
+        <li>两个frame，frame1, frame2 每个frame有三个运动阶段 in: 进入, pause：暂停， out:滑出
+            <ul>
+                <li>Fram1:</li>
+                <ul>
+                    <li>fram1第一阶段 in 结束 ：更新currentIndex, frame1进入pause阶段 </li>
+                    <li>fram1第二阶段 pause 结束：frame1进入out阶段， 唤醒fram2进入第一阶段in</li>
+                </ul>
+                <li>Fram2:</li>
+                <ul>
+                    <li>fram2第一阶段 in 结束 ：更新currentIndex, frame1进入pause阶段 </li>
+                    <li>fram2第二阶段 pause 结束：frame2进入out阶段， 唤醒fram1进入第一阶段in</li>
+                </ul>
+            </ul>
+        </li>
+        <li>
+            替换，changeStatus标记
+            <ul>
+                <li>changeStatus 0: 正常运行</li>
+                <li>changeStatus 1: 替换状态 , 返回新内容的第一项， 重置为0</li>
+            </ul>
+        </li>
+
+    </ul>
+    <div id="box" class="box">
+    </div>
+
+    <div style="text-align:center ">
+        <button type="button" id="btnChange2">切换到队列2</button>
+        <button type="button" id="btnChange">切换到队列1</button>
+        <button type="button" id="btnStop">暂停动画</button>
+        <button type="button" id="btnContinue">继续动画</button>
+    </div>
+
+    <script src="./js/upSlide3.js"></script>
+    <script>
+        const contents = [
+            "队列1：春天 - first",
+            "队列1：夏天",
+            // "队列1：秋天",
+            // "队列1：冬天",
+            // "队列1：夏夏湉",
+            // "队列1：求七天",
+            "队列1：Who are You - last"
+        ];
+        const contents2 = [
+            "队列2：这是怎么回事 - first",
+            "队列2：谁是最可赖的人",
+            "队列2：壮士一去不复返",
+            "队列2：谁来拯救你",
+            "队列2：家福乐团购有没有 - last"
+        ]
+
+        const el = document.querySelector("#box");
+
+        let upSlide = new UpSlide({
+            el
+        });
+        upSlide.start(contents);
+
+        document.getElementById('btnChange').addEventListener("click", () => {
+            upSlide.start(contents);
+        })
+
+        document.getElementById('btnChange2').addEventListener("click", () => {
+            upSlide.start(contents2);
+        })
+
+        document.getElementById('btnStop').addEventListener("click", () => {
+            box.style.animationPlayState = "paused";
+            [...document.querySelectorAll(".upslide-frame")].forEach(e => {
+                e.style.animationPlayState = "paused"
+            })
+        })
+
+        document.getElementById('btnContinue').addEventListener("click", () => {
+            box.style.animationPlayState = "running";
+            [...document.querySelectorAll(".upslide-frame")].forEach(e => {
+                e.style.animationPlayState = "running"
+            })
+        })
+
+    </script>
+
+</body>
+
+</html>
